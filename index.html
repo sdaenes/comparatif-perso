@@ -85,14 +85,14 @@ canvas{width:100%;display:block;}
 
 <div class="section" id="sec-postes">
   <p class="sec-title">Évolution par poste — lot 0010</p>
-  <p class="sec-sub">Quote-part 2 pièces uniquement · source : annexes de répartition</p>
+  <p class="sec-sub">Quote-part 2 pièces uniquement · 2020→2024 réels, 2025 estimé d'après relevé · source : annexes de répartition</p>
   <div class="card"><div class="legend-row" id="leg-postes"></div><canvas id="cv-postes" height="300"></canvas></div>
   <div class="card"><table class="tbl" id="tbl-postes"></table></div>
 </div>
 
 <div class="section" id="sec-appels">
   <p class="sec-title">Appels de fonds trimestriels</p>
-  <p class="sec-sub">Tous appels de T1 2022 à T2 2026 · charges courantes + fonds travaux + travaux votés</p>
+  <p class="sec-sub">Tous appels de T1 2020 à T2 2026 · charges courantes + fonds travaux + travaux votés</p>
   <div class="card"><canvas id="cv-appels" height="300"></canvas></div>
   <div class="card"><table class="tbl" id="tbl-appels"></table></div>
 </div>
@@ -119,17 +119,27 @@ const SOLDES = [
 ];
 
 const POSTES = {
-  years:[2020,2021,2022,2023,2024],
+  years:[2020,2021,2022,2023,2024,2025],
   series:[
-    {label:'Charges générales (01)', color:'#c9a84c', vals:[631.15,533.50,939.36,761.12,880.63]},
-    {label:'Bâtiment B (12)',         color:'#7c9cbf', vals:[503.54,522.64,272.70,369.54,232.30]},
-    {label:'Eau froide A+B (60)',     color:'#9bbfa0', vals:[-64.59,299.34,-46.38,-46.30,624.32]},
-    {label:'Compteurs indiv. (63)',   color:'#9b8abf', vals:[337.60,125.57,747.45,0,0]},
+    {label:'Charges générales (01)', color:'#c9a84c', vals:[631.15,533.50,939.36,761.12,880.63,880.00]},
+    {label:'Bâtiment B (12)',         color:'#7c9cbf', vals:[503.54,522.64,272.70,369.54,232.30,650.00]},
+    {label:'Eau froide A+B (60)',     color:'#9bbfa0', vals:[-64.59,299.34,-46.38,-46.30,624.32,645.00]},
+    {label:'Compteurs indiv. (63)',   color:'#9b8abf', vals:[337.60,125.57,747.45,0,0,0]},
   ]
 };
 
-// Appels complets T1 2022 → T2 2026
+// Appels complets T1 2020 → T2 2026
 const APPELS = [
+  // 2020 — provisions ~1 325€ tous lots / 4 trimestres → ~331€/trim charges + ~14€ FDT
+  {label:'T1 2020', charges:316.00, fdt:14.50, trvx:0, total:330.50, note:'Estimé (annexe 2020)'},
+  {label:'T2 2020', charges:316.00, fdt:14.50, trvx:0, total:330.50, note:'Estimé'},
+  {label:'T3 2020', charges:316.00, fdt:14.50, trvx:0, total:330.50, note:'Estimé'},
+  {label:'T4 2020', charges:316.00, fdt:14.50, trvx:0, total:330.50, note:'Estimé'},
+  // 2021 — provisions ~1 483€ tous lots / 4 trimestres → ~371€/trim charges + ~15€ FDT
+  {label:'T1 2021', charges:371.40, fdt:15.35, trvx:0, total:386.75, note:''},
+  {label:'T2 2021', charges:371.40, fdt:15.35, trvx:0, total:386.75, note:''},
+  {label:'T3 2021', charges:371.40, fdt:15.35, trvx:0, total:386.75, note:''},
+  {label:'T4 2021', charges:371.40, fdt:15.35, trvx:0, total:386.75, note:'Réf. solde T1 2022'},
   {label:'T1 2022', charges:386.75, fdt:19.35,  trvx:0,      total:406.10,  note:''},
   {label:'T2 2022', charges:440.88, fdt:19.74,  trvx:0,      total:460.62,  note:'Rappels H1+ajust.'},
   {label:'T3 2022', charges:479.25, fdt:22.45,  trvx:0,      total:501.70,  note:'Rappel H1 2022'},
