@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mes charges — C1427 / DAENES SEBASTIEN</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Jost:wght@300;400;500&display=swap');
+:root{--bg:#0d0e10;--surface:#13151a;--raised:#1a1d24;--line:#272b35;--faint:#1e2229;--text:#d8d9dd;--muted:#5a5f6e;--gold:#c9a84c;--gold2:#e8c97a;--green:#9bbfa0;--red:#bf8a7c;--blue:#7c9cbf;--purple:#9b8abf;--teal:#7cbfb4;--radius:10px;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Jost',sans-serif;font-weight:300;font-size:14px;line-height:1.6;min-height:100vh;}
+.site-header{padding:2.8rem 2rem 2rem;text-align:center;border-bottom:1px solid var(--line);position:relative;}
+.site-header::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 80% at 50% 0%,rgba(201,168,76,.07),transparent);pointer-events:none;}
+.eyebrow{font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:.6rem;}
+h1{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(1.7rem,4vw,2.6rem);color:#ecedf0;line-height:1.2;}
+.subtitle{margin-top:.4rem;color:var(--muted);font-size:.8rem;letter-spacing:.05em;}
+.nav{display:flex;justify-content:center;border-bottom:1px solid var(--line);flex-wrap:wrap;}
+.ntab{font-family:'Jost',sans-serif;font-weight:400;font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;padding:.9rem 1.5rem;border:none;background:transparent;color:var(--muted);cursor:pointer;position:relative;transition:color .2s;}
+.ntab::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:1px;background:var(--gold);transform:scaleX(0);transition:transform .25s;}
+.ntab.active{color:var(--gold2);}.ntab.active::after{transform:scaleX(1);}
+.ntab:hover:not(.active){color:var(--text);}
+.section{display:none;max-width:1080px;margin:0 auto;padding:2.2rem 1.5rem 4rem;}
+.section.visible{display:block;}
+.sec-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:1.35rem;color:#ecedf0;margin-bottom:.2rem;}
+.sec-sub{font-size:.75rem;color:var(--muted);letter-spacing:.05em;margin-bottom:1.8rem;}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:1.5rem;margin-bottom:1.3rem;}
+.kpi-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:1px;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;margin-bottom:1.5rem;}
+.kpi{background:var(--surface);padding:1rem 1.2rem;}
+.kpi .kl{font-size:.67rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:.3rem;}
+.kpi .kv{font-family:'Cormorant Garamond',serif;font-size:1.35rem;font-weight:400;color:#ecedf0;}
+.kpi .ks{font-size:.72rem;margin-top:.1rem;color:var(--muted);}
+.up{color:var(--red);}.dn{color:var(--green);}
+.tbl{width:100%;border-collapse:collapse;font-size:.78rem;}
+.tbl th{font-size:.67rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-align:right;padding:.55rem .7rem;border-bottom:1px solid var(--line);font-weight:400;}
+.tbl th:first-child{text-align:left;}
+.tbl td{padding:.5rem .7rem;border-bottom:1px solid var(--faint);color:var(--text);text-align:right;vertical-align:middle;}
+.tbl td:first-child{text-align:left;color:var(--muted);}
+.tbl tr:hover td{background:rgba(255,255,255,.02);}
+.tbl tr:last-child td{border-bottom:none;}
+.tbl .subtotal td{background:rgba(201,168,76,.05);color:var(--gold);font-size:.72rem;}
+canvas{width:100%;display:block;}
+.legend-row{display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:1rem;}
+.leg-item{display:flex;align-items:center;gap:.4rem;font-size:.72rem;color:var(--muted);}
+.leg-dot{width:10px;height:10px;border-radius:2px;flex-shrink:0;}
+/* compte */
+.acc-hdr{display:flex;gap:.8rem;padding:.4rem .6rem;font-size:.67rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--line);margin-bottom:.3rem;}
+.acc-row{display:flex;align-items:center;gap:.8rem;padding:.42rem .6rem;border-bottom:1px solid var(--faint);font-size:.78rem;transition:background .15s;}
+.acc-row:hover{background:rgba(255,255,255,.02);}
+.acc-row:last-child{border-bottom:none;}
+.acc-date{width:90px;flex-shrink:0;color:var(--muted);font-size:.72rem;}
+.acc-label{flex:1;}
+.acc-debit{width:82px;text-align:right;flex-shrink:0;color:var(--red);}
+.acc-credit{width:82px;text-align:right;flex-shrink:0;color:var(--green);}
+.acc-solde{width:82px;text-align:right;flex-shrink:0;font-size:.75rem;}
+.acc-solde.pos{color:var(--red);}.acc-solde.neg{color:var(--green);}
+.yr-sep{font-size:.67rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);padding:.7rem .6rem .3rem;margin-top:.5rem;}
+.tag{display:inline-block;font-size:.65rem;padding:.1rem .4rem;border-radius:3px;margin-left:.4rem;vertical-align:middle;}
+.tag-warn{background:rgba(191,138,124,.15);color:var(--red);}
+.tag-ok{background:rgba(155,191,160,.15);color:var(--green);}
+.tag-info{background:rgba(124,156,191,.15);color:var(--blue);}
+#gtt{position:fixed;background:var(--raised);border:1px solid var(--line);border-radius:6px;padding:.4rem .75rem;font-size:.75rem;pointer-events:none;opacity:0;transition:opacity .12s;z-index:200;white-space:nowrap;color:var(--text);}
+#gtt.on{opacity:1;}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <p class="eyebrow">Copropriété C1427 · Lots 0010 · 0022 · 0024</p>
+  <h1>Mes charges personnelles</h1>
+  <p class="subtitle">DAENES SEBASTIEN · P/SCI AMOLLIMES · 12 Rue Blondel-7 de Parthenay · 2020 → 2026</p>
+</header>
+<nav class="nav">
+  <button class="ntab active" onclick="setTab('soldes')">Soldes annuels</button>
+  <button class="ntab" onclick="setTab('postes')">Évolution par poste</button>
+  <button class="ntab" onclick="setTab('appels')">Appels de fonds</button>
+  <button class="ntab" onclick="setTab('compte')">Extrait de compte</button>
+</nav>
+
+<div class="section visible" id="sec-soldes">
+  <p class="sec-title">Soldes annuels de régularisation</p>
+  <p class="sec-sub">Charges réelles réparties vs provisions appelées · source : annexes et comptes de copropriété</p>
+  <div class="kpi-row" id="kpi-soldes"></div>
+  <div class="card"><canvas id="cv-soldes" height="280"></canvas></div>
+  <div class="card"><table class="tbl"><thead><tr><th>Année</th><th>Charges réelles</th><th>Provisions</th><th>Solde régularisation</th><th>Source</th></tr></thead><tbody id="tbody-soldes"></tbody></table></div>
+</div>
+
+<div class="section" id="sec-postes">
+  <p class="sec-title">Évolution par poste — lot 0010</p>
+  <p class="sec-sub">Quote-part 2 pièces uniquement · source : annexes de répartition</p>
+  <div class="card"><div class="legend-row" id="leg-postes"></div><canvas id="cv-postes" height="300"></canvas></div>
+  <div class="card"><table class="tbl" id="tbl-postes"></table></div>
+</div>
+
+<div class="section" id="sec-appels">
+  <p class="sec-title">Appels de fonds trimestriels</p>
+  <p class="sec-sub">Tous appels de T1 2022 à T2 2026 · charges courantes + fonds travaux + travaux votés</p>
+  <div class="card"><canvas id="cv-appels" height="300"></canvas></div>
+  <div class="card"><table class="tbl" id="tbl-appels"></table></div>
+</div>
+
+<div class="section" id="sec-compte">
+  <p class="sec-title">Extrait de compte complet</p>
+  <p class="sec-sub">Reconstitution ligne par ligne · T1 2022 → T2 2026</p>
+  <div class="card" id="compte-wrap"></div>
+</div>
+
+<div id="gtt"></div>
+
+<script>
+// ══════════════════════════════════════════════════
+// DATA
+// ══════════════════════════════════════════════════
+
+const SOLDES = [
+  {year:2020, charges:1407.71+50.00+14.57,   prov:-(1325.43+42.20+12.28), solde:+92.36,   src:'Annexe répartition 2020'},
+  {year:2021, charges:1481.05+46.52+13.59,   prov:-(1483.53+49.14+14.35), solde:-5.86,    src:'Annexe répartition 2021'},
+  {year:2022, charges:1982.08+53.51+15.44,   prov:-(1742.50+57.26+16.76), solde:+239.58,  src:'Compte copropriété 2022'},
+  {year:2023, charges:1148.69+49.87+14.46,   prov:-(1742.50+57.26+16.76), solde:-593.81,  src:'Compte copropriété 2023'},
+  {year:2024, charges:1737.25+49.14+14.17,   prov:-(1668.49+57.26+16.76), solde:+58.05,   src:'Annexe répartition 2024'},
+];
+
+const POSTES = {
+  years:[2020,2021,2022,2023,2024],
+  series:[
+    {label:'Charges générales (01)', color:'#c9a84c', vals:[631.15,533.50,939.36,761.12,880.63]},
+    {label:'Bâtiment B (12)',         color:'#7c9cbf', vals:[503.54,522.64,272.70,369.54,232.30]},
+    {label:'Eau froide A+B (60)',     color:'#9bbfa0', vals:[-64.59,299.34,-46.38,-46.30,624.32]},
+    {label:'Compteurs indiv. (63)',   color:'#9b8abf', vals:[337.60,125.57,747.45,0,0]},
+  ]
+};
+
+// Appels complets T1 2022 → T2 2026
+const APPELS = [
+  {label:'T1 2022', charges:386.75, fdt:19.35,  trvx:0,      total:406.10,  note:''},
+  {label:'T2 2022', charges:440.88, fdt:19.74,  trvx:0,      total:460.62,  note:'Rappels H1+ajust.'},
+  {label:'T3 2022', charges:479.25, fdt:22.45,  trvx:0,      total:501.70,  note:'Rappel H1 2022'},
+  {label:'T4 2022', charges:435.63, fdt:20.51,  trvx:0,      total:456.14,  note:''},
+  {label:'T1 2023', charges:435.63, fdt:20.51,  trvx:0,      total:456.14,  note:''},
+  {label:'T2 2023', charges:435.63, fdt:20.51,  trvx:0,      total:456.14,  note:''},
+  {label:'T3 2023', charges:435.63, fdt:20.51,  trvx:0,      total:456.14,  note:''},
+  {label:'T4 2023', charges:435.63, fdt:20.51,  trvx:0,      total:456.14,  note:''},
+  {label:'T1 2024', charges:435.63, fdt:20.51,  trvx:0,      total:456.14,  note:''},
+  {label:'T2 2024', charges:435.63, fdt:20.51,  trvx:0,      total:456.14,  note:''},
+  {label:'T3 2024', charges:435.63, fdt:20.51,  trvx:0,      total:456.14,  note:''},
+  {label:'T4 2024', charges:435.63, fdt:20.51,  trvx:387.11, total:843.25,  note:'PPPT +387€'},
+  {label:'T1 2025', charges:435.63, fdt:20.51,  trvx:0,      total:456.14,  note:''},
+  {label:'T2 2025', charges:435.63, fdt:20.51,  trvx:111.47, total:567.61,  note:'RCP +111€'},
+  {label:'T3 2025', charges:744.33, fdt:31.22,  trvx:71.93,  total:847.48,  note:'Rappel H1+peinture'},
+  {label:'T4 2025', charges:538.53, fdt:24.08,  trvx:71.93,  total:634.54,  note:'Peinture grille'},
+  {label:'T1 2026', charges:538.54, fdt:24.09,  trvx:0,      total:562.63,  note:'Budget 31 110€/an'},
+  {label:'T2 2026', charges:538.54, fdt:24.09,  trvx:0,      total:562.63,  note:'Budget 31 110€/an'},
+];
+
+// Extrait de compte complet reconstitué
+const COMPTE = [
+  // 2022
+  {yr:'2022', date:'01/01/2022', label:'Appel provisionnel T1 2022',             d:386.75, c:0,      s:386.75},
+  {yr:'2022', date:'01/01/2022', label:'Fonds travaux ALUR T1 2022',             d:19.35,  c:0,      s:406.10},
+  {yr:'2022', date:'28/02/2022', label:'Virement n°7263072',                     d:0,      c:406.10, s:0.00},
+  {yr:'2022', date:'04/01/2022', label:'Régularisation charges 2020 ⚠️',         d:92.36,  c:0,      s:92.36, warn:true},
+  {yr:'2022', date:'01/04/2022', label:'Appel provisionnel T2 2022',             d:440.88, c:0,      s:533.24},
+  {yr:'2022', date:'01/04/2022', label:'Fonds travaux ALUR T2 2022',             d:19.74,  c:0,      s:552.98},
+  // solde avant T3 = 460.62 payé
+  {yr:'2022', date:'10/05/2022', label:'Régularisation charges 2021 ✅',         d:0,      c:5.86,   s:547.12, ok:true},
+  {yr:'2022', date:'??/??/2022', label:'Paiement(s) T2 2022',                    d:0,      c:460.62, s:86.50, info:true},
+  {yr:'2022', date:'01/07/2022', label:'Appel provisionnel T3 2022',             d:479.25, c:0,      s:565.75},
+  {yr:'2022', date:'01/07/2022', label:'Fonds travaux ALUR T3 2022',             d:22.45,  c:0,      s:588.20},
+  {yr:'2022', date:'01/10/2022', label:'Appel provisionnel T4 2022',             d:435.63, c:0,      s:1023.83},
+  {yr:'2022', date:'01/10/2022', label:'Fonds travaux ALUR T4 2022',             d:20.51,  c:0,      s:1044.34},
+  // 2023
+  {yr:'2023', date:'01/01/2023', label:'Appel provisionnel T1 2023',             d:435.63, c:0,      s:1479.97},
+  {yr:'2023', date:'01/01/2023', label:'Fonds travaux ALUR T1 2023',             d:20.51,  c:0,      s:1500.48},
+  {yr:'2023', date:'05/10/2022', label:'Virement n°0803322 (règlement T4+T1)',   d:0,      c:456.14, s:1044.34, info:true},
+  {yr:'2023', date:'01/04/2023', label:'Appel provisionnel T2 2023',             d:435.63, c:0,      s:1479.97},
+  {yr:'2023', date:'01/04/2023', label:'Fonds travaux ALUR T2 2023',             d:20.51,  c:0,      s:1500.48},
+  {yr:'2023', date:'01/07/2023', label:'Appel provisionnel T3 2023',             d:435.63, c:0,      s:1936.11},
+  {yr:'2023', date:'01/07/2023', label:'Fonds travaux ALUR T3 2023',             d:20.51,  c:0,      s:1956.62},
+  {yr:'2023', date:'01/10/2023', label:'Appel provisionnel T4 2023',             d:435.63, c:0,      s:2392.25},
+  {yr:'2023', date:'01/10/2023', label:'Fonds travaux ALUR T4 2023',             d:20.51,  c:0,      s:2412.76},
+  // 2024
+  {yr:'2024', date:'01/01/2024', label:'Appel provisionnel T1 2024',             d:435.63, c:0,      s:435.63},
+  {yr:'2024', date:'01/01/2024', label:'Fonds travaux ALUR T1 2024',             d:20.51,  c:0,      s:456.14},
+  {yr:'2024', date:'09/01/2024', label:'Virement n°3791296',                     d:0,      c:456.14, s:0.00},
+  {yr:'2024', date:'01/04/2024', label:'Appel provisionnel T2 2024',             d:435.63, c:0,      s:435.63},
+  {yr:'2024', date:'01/04/2024', label:'Fonds travaux ALUR T2 2024',             d:20.51,  c:0,      s:456.14},
+  {yr:'2024', date:'21/05/2024', label:'Virement n°0574136',                     d:0,      c:456.14, s:0.00},
+  {yr:'2024', date:'29/05/2024', label:'Régularisation charges 2022 ⚠️',         d:239.58, c:0,      s:239.58, warn:true},
+  {yr:'2024', date:'29/05/2024', label:'Régularisation charges 2023 ✅',         d:0,      c:593.81, s:-354.23, ok:true},
+  {yr:'2024', date:'01/07/2024', label:'Appel provisionnel T3 2024',             d:435.63, c:0,      s:81.40},
+  {yr:'2024', date:'01/07/2024', label:'Fonds travaux ALUR T3 2024',             d:20.51,  c:0,      s:101.91},
+  {yr:'2024', date:'19/08/2024', label:'Virement n°0766092',                     d:0,      c:456.14, s:-354.23},
+  {yr:'2024', date:'01/10/2024', label:'Appel provisionnel T4 2024',             d:435.63, c:0,      s:81.40},
+  {yr:'2024', date:'01/10/2024', label:'Fonds travaux ALUR T4 2024',             d:20.51,  c:0,      s:101.91},
+  {yr:'2024', date:'01/10/2024', label:'Réalisation PPPT (travaux)',             d:387.11, c:0,      s:489.02},
+  {yr:'2024', date:'14/11/2024', label:'Virement n°0768811',                     d:0,      c:843.25, s:-354.23},
+  // 2025
+  {yr:'2025', date:'01/01/2025', label:'Solde créditeur reporté ✅',             d:0,      c:354.23, s:-354.23, ok:true},
+  {yr:'2025', date:'01/01/2025', label:'Appel provisionnel T1 2025',             d:435.63, c:0,      s:81.40},
+  {yr:'2025', date:'01/01/2025', label:'Fonds travaux ALUR T1 2025',             d:20.51,  c:0,      s:101.91},
+  {yr:'2025', date:'31/01/2025', label:'Virement n°6646787',                     d:0,      c:456.14, s:-354.23},
+  {yr:'2025', date:'01/04/2025', label:'Appel provisionnel T2 2025',             d:435.63, c:0,      s:81.40},
+  {yr:'2025', date:'01/04/2025', label:'Fonds travaux ALUR T2 2025',             d:20.51,  c:0,      s:101.91},
+  {yr:'2025', date:'01/04/2025', label:'Mise en conformité RCP (travaux)',       d:111.47, c:0,      s:213.38},
+  {yr:'2025', date:'25/06/2025', label:'Régularisation charges 2024',            d:58.06,  c:0,      s:271.44},
+  {yr:'2025', date:'01/07/2025', label:'Appel provisionnel T3 2025',             d:744.33, c:0,      s:1015.77},
+  {yr:'2025', date:'01/07/2025', label:'Fonds travaux ALUR T3 2025',             d:31.22,  c:0,      s:1046.99},
+  {yr:'2025', date:'01/07/2025', label:'Réfection peinture grille (travaux)',    d:71.93,  c:0,      s:1118.92},
+  {yr:'2025', date:'05/09/2025', label:'Mise en demeure ⚠️',                     d:54.00,  c:0,      s:1172.92, warn:true},
+  {yr:'2025', date:'29/09/2025', label:'Virement BLONDEL APPELS',                d:0,      c:111.47, s:1061.45},
+  {yr:'2025', date:'29/09/2025', label:'Virement 12 RUE BLONDEL',                d:0,      c:456.14, s:605.31},
+  {yr:'2025', date:'29/09/2025', label:'Virement CHARGES 12 BL',                 d:0,      c:456.14, s:149.17},
+  {yr:'2025', date:'01/10/2025', label:'Appel provisionnel T4 2025',             d:538.53, c:0,      s:687.70},
+  {yr:'2025', date:'01/10/2025', label:'Fonds travaux ALUR T4 2025',             d:24.08,  c:0,      s:711.78},
+  {yr:'2025', date:'01/10/2025', label:'Réfection peinture grille (travaux)',    d:71.93,  c:0,      s:783.71},
+  // 2026
+  {yr:'2026', date:'01/01/2026', label:'Solde antérieur reporté',                d:783.71, c:0,      s:783.71, warn:true},
+  {yr:'2026', date:'01/01/2026', label:'Appel provisionnel T1 2026',             d:538.54, c:0,      s:1322.25},
+  {yr:'2026', date:'01/01/2026', label:'Fonds travaux ALUR T1 2026',             d:24.09,  c:0,      s:1346.34},
+  {yr:'2026', date:'28/03/2026', label:'E-paiement ✅',                           d:0,      c:1346.34,s:0.00, ok:true},
+  {yr:'2026', date:'01/04/2026', label:'Appel provisionnel T2 2026',             d:538.54, c:0,      s:538.54},
+  {yr:'2026', date:'01/04/2026', label:'Fonds travaux ALUR T2 2026',             d:24.09,  c:0,      s:562.63},
+];
+
+const fmt  = n=>new Intl.NumberFormat('fr-FR',{style:'currency',currency:'EUR',maximumFractionDigits:2}).format(n);
+const fmt0 = n=>new Intl.NumberFormat('fr-FR',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(n);
+let currentTab='soldes';
+
+function setTab(t){
+  currentTab=t;
+  const tabs=['soldes','postes','appels','compte'];
+  document.querySelectorAll('.ntab').forEach((b,i)=>b.classList.toggle('active',tabs[i]===t));
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('visible'));
+  document.getElementById('sec-'+t).classList.add('visible');
+  render();
+}
+
+// ── SOLDES ────────────────────────────────────────
+function renderSoldes(){
+  const kpi=document.getElementById('kpi-soldes'); kpi.innerHTML='';
+  const items=[
+    {l:'Cumul 2020→2024',v:SOLDES.reduce((s,d)=>s+d.solde,0),s:''},
+    {l:'2022 (dépassement)',v:+239.58,s:'charges > provisions'},
+    {l:'2023 (excédent)',v:-593.81,s:'provisions > charges'},
+    {l:'2024 (dépassement)',v:+58.05,s:'charges > provisions'},
+    {l:'Solde dû 01/04/2026',v:562.63,alert:true,s:'T2 2026 en cours'},
+    {l:'Fonds travaux',v:803.73,s:'au 01/04/2026'},
+  ];
+  items.forEach(item=>{
+    const d=document.createElement('div'); d.className='kpi';
+    const style=item.alert?'color:var(--red)':item.v<0?'color:var(--green)':'';
+    d.innerHTML=`<div class="kl">${item.l}</div><div class="kv" style="${style}">${fmt(item.v)}</div><div class="ks">${item.s}</div>`;
+    kpi.appendChild(d);
+  });
+
+  const canvas=document.getElementById('cv-soldes');
+  const W=canvas.offsetWidth||900, H=280;
+  canvas.width=W; canvas.height=H;
+  const ctx=canvas.getContext('2d'); ctx.clearRect(0,0,W,H);
+  const years=SOLDES.map(d=>d.year);
+  const charges=SOLDES.map(d=>d.charges);
+  const provAbs=SOLDES.map(d=>Math.abs(d.prov));
+  const soldes=SOLDES.map(d=>d.solde);
+  const pad={top:30,right:50,bottom:45,left:90};
+  const maxV=Math.max(...charges,...provAbs)*1.12;
+  const xP=i=>pad.left+(i/(years.length-1))*(W-pad.left-pad.right);
+  const yP=v=>pad.top+(1-v/maxV)*(H-pad.top-pad.bottom);
+
+  for(let i=0;i<=4;i++){
+    const yy=pad.top+i/4*(H-pad.top-pad.bottom);
+    ctx.beginPath(); ctx.moveTo(pad.left,yy); ctx.lineTo(W-pad.right,yy);
+    ctx.strokeStyle=i===4?'#272b35':'#1e2229'; ctx.lineWidth=1; ctx.stroke();
+    ctx.fillStyle='#5a5f6e'; ctx.font='10px Jost'; ctx.textAlign='right';
+    ctx.fillText(fmt0(maxV-i/4*maxV),pad.left-6,yy+4);
+  }
+  years.forEach((y,i)=>{ctx.fillStyle='#5a5f6e';ctx.font='11px Jost';ctx.textAlign='center';ctx.fillText(y,xP(i),H-pad.bottom+16);});
+
+  ctx.setLineDash([4,4]);
+  ctx.beginPath(); ctx.moveTo(xP(0),yP(provAbs[0]));
+  provAbs.forEach((_,i)=>ctx.lineTo(xP(i),yP(provAbs[i])));
+  ctx.strokeStyle='#5a5f6e66'; ctx.lineWidth=1.5; ctx.stroke(); ctx.setLineDash([]);
+
+  ctx.beginPath(); ctx.moveTo(xP(0),yP(charges[0]));
+  charges.forEach((_,i)=>ctx.lineTo(xP(i),yP(charges[i])));
+  ctx.lineTo(xP(years.length-1),H-pad.bottom); ctx.lineTo(xP(0),H-pad.bottom); ctx.closePath();
+  const gr=ctx.createLinearGradient(0,pad.top,0,H-pad.bottom);
+  gr.addColorStop(0,'rgba(201,168,76,.12)'); gr.addColorStop(1,'rgba(201,168,76,0)');
+  ctx.fillStyle=gr; ctx.fill();
+  ctx.beginPath(); ctx.moveTo(xP(0),yP(charges[0]));
+  charges.forEach((_,i)=>ctx.lineTo(xP(i),yP(charges[i])));
+  ctx.strokeStyle='#c9a84c'; ctx.lineWidth=1.5; ctx.stroke();
+  charges.forEach((v,i)=>{
+    ctx.beginPath(); ctx.arc(xP(i),yP(v),4,0,Math.PI*2); ctx.fillStyle='#c9a84c'; ctx.fill();
+    ctx.fillStyle='#ecedf0'; ctx.font='10px Jost'; ctx.textAlign='center'; ctx.fillText(fmt0(v),xP(i),yP(v)-12);
+  });
+  soldes.forEach((v,i)=>{
+    const col=v>=0?'#bf8a7c':'#9bbfa0'; const sign=v>=0?'+':'';
+    ctx.fillStyle=col; ctx.font='bold 10px Jost'; ctx.textAlign='center';
+    ctx.fillText(sign+fmt0(v),xP(i),H-pad.bottom+(v>=0?-4:12));
+  });
+  ctx.fillStyle='#c9a84c'; ctx.fillRect(pad.left,H-8,16,2);
+  ctx.fillStyle='#5a5f6e'; ctx.font='10px Jost'; ctx.textAlign='left'; ctx.fillText('Charges réelles',pad.left+20,H-4);
+  ctx.setLineDash([4,4]); ctx.beginPath(); ctx.moveTo(pad.left+155,H-7); ctx.lineTo(pad.left+171,H-7);
+  ctx.strokeStyle='#5a5f6e66'; ctx.lineWidth=1.5; ctx.stroke(); ctx.setLineDash([]);
+  ctx.fillStyle='#5a5f6e'; ctx.fillText('Provisions',pad.left+175,H-4);
+
+  const tb=document.getElementById('tbody-soldes'); tb.innerHTML='';
+  SOLDES.forEach(d=>{
+    const sc=d.solde>=0?'up':'dn'; const sg=d.solde>=0?'+':'';
+    tb.innerHTML+=`<tr><td>${d.year}</td><td>${fmt(d.charges)}</td><td style="color:var(--muted)">${fmt(Math.abs(d.prov))}</td><td><span class="${sc}">${sg}${fmt(d.solde)}</span></td><td style="font-size:.7rem;color:var(--muted)">${d.src}</td></tr>`;
+  });
+  const tot=SOLDES.reduce((s,d)=>s+d.solde,0);
+  tb.innerHTML+=`<tr class="subtotal"><td colspan="3">Solde cumulé 2020→2024</td><td><span class="${tot>=0?'up':'dn'}">${tot>=0?'+':''}${fmt(tot)}</span></td><td></td></tr>`;
+}
+
+// ── POSTES ────────────────────────────────────────
+function renderPostes(){
+  const canvas=document.getElementById('cv-postes');
+  const W=canvas.offsetWidth||900, H=300;
+  canvas.width=W; canvas.height=H;
+  const ctx=canvas.getContext('2d'); ctx.clearRect(0,0,W,H);
+  const years=POSTES.years;
+  const pad={top:30,right:50,bottom:45,left:85};
+  const allV=POSTES.series.flatMap(s=>s.vals);
+  const maxV=Math.max(...allV)*1.12, minV=Math.min(...allV.filter(v=>v<0),-50)*1.2;
+  const range=maxV-minV;
+  const xP=i=>pad.left+(i/(years.length-1))*(W-pad.left-pad.right);
+  const yP=v=>pad.top+(1-(v-minV)/range)*(H-pad.top-pad.bottom);
+
+  ctx.beginPath(); ctx.moveTo(pad.left,yP(0)); ctx.lineTo(W-pad.right,yP(0));
+  ctx.strokeStyle='#272b35'; ctx.lineWidth=1; ctx.stroke();
+  for(let i=0;i<=4;i++){
+    const val=minV+i/4*range; const yy=yP(val);
+    if(i>0&&i<4){ctx.beginPath();ctx.moveTo(pad.left,yy);ctx.lineTo(W-pad.right,yy);ctx.strokeStyle='#1e2229';ctx.lineWidth=1;ctx.stroke();}
+    ctx.fillStyle='#5a5f6e'; ctx.font='10px Jost'; ctx.textAlign='right'; ctx.fillText(fmt0(val),pad.left-6,yy+4);
+  }
+  years.forEach((y,i)=>{ctx.fillStyle='#5a5f6e';ctx.font='11px Jost';ctx.textAlign='center';ctx.fillText(y,xP(i),H-pad.bottom+16);});
+
+  POSTES.series.forEach(s=>{
+    ctx.beginPath(); ctx.moveTo(xP(0),yP(s.vals[0]));
+    s.vals.forEach((_,i)=>ctx.lineTo(xP(i),yP(s.vals[i])));
+    ctx.strokeStyle=s.color; ctx.lineWidth=1.5; ctx.stroke();
+    s.vals.forEach((v,i)=>{ctx.beginPath();ctx.arc(xP(i),yP(v),4,0,Math.PI*2);ctx.fillStyle=s.color;ctx.fill();});
+  });
+
+  const leg=document.getElementById('leg-postes'); leg.innerHTML='';
+  POSTES.series.forEach(s=>{leg.innerHTML+=`<div class="leg-item"><span class="leg-dot" style="background:${s.color}"></span>${s.label}</div>`;});
+
+  const tbl=document.getElementById('tbl-postes');
+  tbl.innerHTML=`<thead><tr><th>Poste</th>${years.map(y=>`<th>${y}</th>`).join('')}<th>Variation</th></tr></thead><tbody>`;
+  POSTES.series.forEach(s=>{
+    const d=s.vals[s.vals.length-1]-s.vals[0]; const sc=d>=0?'up':'dn'; const sg=d>=0?'+':'';
+    tbl.innerHTML+=`<tr><td style="color:${s.color}">${s.label}</td>${s.vals.map(v=>`<td style="${v<0?'color:var(--green)':''}">${fmt(v)}</td>`).join('')}<td><span class="${sc}">${sg}${fmt(d)}</span></td></tr>`;
+  });
+  tbl.innerHTML+='<tr class="subtotal"><td>Total lot 0010</td>';
+  years.forEach((_,i)=>tbl.innerHTML+=`<td>${fmt(POSTES.series.reduce((s,d)=>s+d.vals[i],0))}</td>`);
+  const t0=POSTES.series.reduce((s,d)=>s+d.vals[0],0), tN=POSTES.series.reduce((s,d)=>s+d.vals[d.vals.length-1],0);
+  const dt=tN-t0; tbl.innerHTML+=`<td><span class="${dt>=0?'up':'dn'}">${dt>=0?'+':''}${fmt(dt)}</span></td></tr></tbody>`;
+}
+
+// ── APPELS ────────────────────────────────────────
+function renderAppels(){
+  const canvas=document.getElementById('cv-appels');
+  const W=canvas.offsetWidth||900, H=300;
+  canvas.width=W; canvas.height=H;
+  const ctx=canvas.getContext('2d'); ctx.clearRect(0,0,W,H);
+  const n=APPELS.length;
+  const pad={top:25,right:20,bottom:60,left:75};
+  const maxV=Math.max(...APPELS.map(a=>a.total))*1.15;
+  const barW=(W-pad.left-pad.right)/n*0.65;
+  const xC=i=>pad.left+(i+0.5)*(W-pad.left-pad.right)/n;
+  const yP=v=>pad.top+(1-v/maxV)*(H-pad.top-pad.bottom);
+  const tt=document.getElementById('gtt');
+
+  for(let i=0;i<=3;i++){
+    const yy=pad.top+i/3*(H-pad.top-pad.bottom);
+    ctx.beginPath(); ctx.moveTo(pad.left,yy); ctx.lineTo(W-pad.right,yy);
+    ctx.strokeStyle='#1e2229'; ctx.lineWidth=1; ctx.stroke();
+    ctx.fillStyle='#5a5f6e'; ctx.font='10px Jost'; ctx.textAlign='right';
+    ctx.fillText(fmt0(maxV-i/3*maxV),pad.left-6,yy+4);
+  }
+
+  // Year separators
+  const yrs=['2022','2023','2024','2025','2026'];
+  let yrIdx=0;
+  APPELS.forEach((a,i)=>{
+    const yr=a.label.split(' ')[1];
+    if(yr!==yrs[yrIdx]){yrIdx++;ctx.beginPath();ctx.moveTo(xC(i)-barW,pad.top);ctx.lineTo(xC(i)-barW,H-pad.bottom);ctx.strokeStyle='#272b35';ctx.lineWidth=1;ctx.setLineDash([2,2]);ctx.stroke();ctx.setLineDash([]);
+    ctx.fillStyle='#5a5f6e44';ctx.font='10px Jost';ctx.textAlign='center';ctx.fillText(yrs[yrIdx],xC(i),pad.top-4);}
+    if(i===0){ctx.fillStyle='#5a5f6e44';ctx.font='10px Jost';ctx.textAlign='center';ctx.fillText('2022',xC(0),pad.top-4);}
+  });
+
+  canvas._bars=[];
+  APPELS.forEach((a,i)=>{
+    const x=xC(i)-barW/2;
+    const hC=(H-pad.top-pad.bottom)*(a.charges/maxV);
+    const hF=(H-pad.top-pad.bottom)*(a.fdt/maxV);
+    const hT=(H-pad.top-pad.bottom)*(a.trvx/maxV);
+    if(a.trvx>0){ctx.fillStyle='#c9a84c';ctx.fillRect(x,yP(a.total),barW,hT);}
+    ctx.fillStyle='#9b8abf88';ctx.fillRect(x,yP(a.charges+a.fdt),barW,hF);
+    const sp=a.total>700;
+    ctx.fillStyle=(sp?'#bf8a7c':'#7c9cbf')+'cc';ctx.fillRect(x,yP(a.charges),barW,hC);
+    ctx.fillStyle='#5a5f6e'; ctx.font='8px Jost'; ctx.textAlign='center';
+    ctx.save(); ctx.translate(xC(i),H-pad.bottom+8); ctx.rotate(-Math.PI/4); ctx.fillText(a.label,0,0); ctx.restore();
+    canvas._bars[i]={x,y:yP(a.total),w:barW,h:(H-pad.bottom)-yP(a.total),data:a};
+  });
+
+  canvas.addEventListener('mousemove',e=>{
+    const r=canvas.getBoundingClientRect(); const mx=e.clientX-r.left,my=e.clientY-r.top; let found=false;
+    (canvas._bars||[]).forEach(b=>{
+      if(mx>=b.x&&mx<=b.x+b.w&&my>=b.y&&my<=b.y+b.h){
+        let t=`${b.data.label} · ${fmt(b.data.total)}`; if(b.data.note)t+=` (${b.data.note})`;
+        tt.textContent=t; tt.classList.add('on'); tt.style.left=(e.clientX+14)+'px'; tt.style.top=(e.clientY-10)+'px'; found=true;
+      }
+    });
+    if(!found)tt.classList.remove('on');
+  });
+  canvas.addEventListener('mouseleave',()=>tt.classList.remove('on'));
+
+  const tbl=document.getElementById('tbl-appels');
+  tbl.innerHTML=`<thead><tr><th>Trimestre</th><th>Charges cour.</th><th>Fonds trvx</th><th>Travaux</th><th>Total</th><th>Note</th></tr></thead><tbody>`;
+  let annuals={};
+  APPELS.forEach(a=>{
+    const yr=a.label.split(' ')[1]; annuals[yr]=(annuals[yr]||0)+a.total;
+    const sp=a.total>700;
+    tbl.innerHTML+=`<tr><td>${a.label}</td><td>${fmt(a.charges)}</td><td style="color:var(--purple)">${a.fdt>0?fmt(a.fdt):'—'}</td><td style="color:${a.trvx>0?'var(--gold)':'var(--muted)'}">${a.trvx>0?fmt(a.trvx):'—'}</td><td style="color:${sp?'var(--red)':''}">${fmt(a.total)}</td><td style="font-size:.7rem;color:var(--muted)">${a.note||'—'}</td></tr>`;
+  });
+  Object.entries(annuals).forEach(([yr,tot])=>tbl.innerHTML+=`<tr class="subtotal"><td colspan="4">Total ${yr}</td><td>${fmt(tot)}</td><td></td></tr>`);
+  tbl.innerHTML+='</tbody>';
+}
+
+// ── COMPTE ────────────────────────────────────────
+function renderCompte(){
+  const wrap=document.getElementById('compte-wrap'); wrap.innerHTML='';
+
+  const hdr=document.createElement('div'); hdr.className='acc-hdr';
+  hdr.innerHTML=`<span class="acc-date">Date</span><span style="flex:1">Libellé</span><span class="acc-debit">Débit</span><span class="acc-credit">Crédit</span><span class="acc-solde">Solde</span>`;
+  wrap.appendChild(hdr);
+
+  let lastYr='';
+  COMPTE.forEach(r=>{
+    if(r.yr!==lastYr){
+      lastYr=r.yr;
+      const sep=document.createElement('div'); sep.className='yr-sep'; sep.textContent=`Exercice ${r.yr}`;
+      wrap.appendChild(sep);
+    }
+    const row=document.createElement('div'); row.className='acc-row';
+    const lStyle=r.warn?'color:var(--red)':r.ok?'color:var(--green)':r.info?'color:var(--blue)':'';
+    const sStyle=r.s>0?'pos':r.s<0?'neg':'';
+    row.innerHTML=`<span class="acc-date">${r.date}</span><span class="acc-label" style="${lStyle}">${r.label}</span><span class="acc-debit">${r.d>0?fmt(r.d):'—'}</span><span class="acc-credit">${r.c>0?fmt(r.c):'—'}</span><span class="acc-solde ${sStyle}">${fmt(r.s)}</span>`;
+    wrap.appendChild(row);
+  });
+
+  const last=COMPTE[COMPTE.length-1];
+  const summ=document.createElement('div');
+  summ.style.cssText='margin-top:1.2rem;padding-top:1rem;border-top:1px solid var(--line);display:flex;justify-content:flex-end;align-items:center;gap:1.5rem;';
+  const col=last.s>0?'var(--red)':last.s<0?'var(--green)':'var(--muted)';
+  summ.innerHTML=`<span style="font-size:.74rem;color:var(--muted)">Solde au 01/04/2026</span><span style="font-family:'Cormorant Garamond',serif;font-size:1.6rem;color:${col}">${fmt(last.s)}</span>`;
+  wrap.appendChild(summ);
+}
+
+function render(){
+  if(currentTab==='soldes') renderSoldes();
+  else if(currentTab==='postes') renderPostes();
+  else if(currentTab==='appels') renderAppels();
+  else renderCompte();
+}
+window.addEventListener('resize',render);
+render();
+</script>
+</body>
+</html>
