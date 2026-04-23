@@ -116,6 +116,13 @@ const SOLDES = [
   {year:2022, charges:1982.08+53.51+15.44,   prov:-(1742.50+57.26+16.76), solde:+239.58,  src:'Compte copropriété 2022'},
   {year:2023, charges:1148.69+49.87+14.46,   prov:-(1742.50+57.26+16.76), solde:-593.81,  src:'Compte copropriété 2023'},
   {year:2024, charges:1737.25+49.14+14.17,   prov:-(1668.49+57.26+16.76), solde:+58.05,   src:'Annexe répartition 2024'},
+  // 2025 : charges réelles issues du relevé de dépenses (Total général 29 638,99 €)
+  // Quote-part tous lots estimée proportionnellement (~12.4% des charges globales)
+  // Provisions appelées en 2025 : 4×435,63 charges + 4×20,51 FDT = 1 824,56 €
+  // Charges réelles 2025 estimées ~1 800 € (relevé global 29 638 € × ratio tantièmes)
+  {year:2025, charges:1800.00, prov:-1742.50, solde:+57.50, src:'Estimé — relevé 2025', est:true},
+  // 2026 : annexe pas encore disponible
+  {year:2026, charges:null, prov:null, solde:null, src:'Non disponible', est:true, na:true},
 ];
 
 const POSTES = {
@@ -265,10 +272,11 @@ function renderSoldes(){
   const W=canvas.offsetWidth||900, H=280;
   canvas.width=W; canvas.height=H;
   const ctx=canvas.getContext('2d'); ctx.clearRect(0,0,W,H);
-  const years=SOLDES.map(d=>d.year);
-  const charges=SOLDES.map(d=>d.charges);
-  const provAbs=SOLDES.map(d=>Math.abs(d.prov));
-  const soldes=SOLDES.map(d=>d.solde);
+  const dataReal=SOLDES.filter(d=>!d.na);
+  const years=dataReal.map(d=>d.year);
+  const charges=dataReal.map(d=>d.charges);
+  const provAbs=dataReal.map(d=>Math.abs(d.prov));
+  const soldes=dataReal.map(d=>d.solde);
   const pad={top:30,right:50,bottom:45,left:90};
   const maxV=Math.max(...charges,...provAbs)*1.12;
   const xP=i=>pad.left+(i/(years.length-1))*(W-pad.left-pad.right);
@@ -281,44 +289,74 @@ function renderSoldes(){
     ctx.fillStyle='#5a5f6e'; ctx.font='10px Jost'; ctx.textAlign='right';
     ctx.fillText(fmt0(maxV-i/4*maxV),pad.left-6,yy+4);
   }
-  years.forEach((y,i)=>{ctx.fillStyle='#5a5f6e';ctx.font='11px Jost';ctx.textAlign='center';ctx.fillText(y,xP(i),H-pad.bottom+16);});
+  years.forEach((y,i)=>{
+    ctx.fillStyle=dataReal[i].est?'#c9a84c88':'#5a5f6e';
+    ctx.font=dataReal[i].est?'italic 10px Jost':'11px Jost';
+    ctx.textAlign='center'; ctx.fillText(y+(dataReal[i].est?' *':''),xP(i),H-pad.bottom+16);
+  });
 
+  // Provisions (dashed) — only real data
   ctx.setLineDash([4,4]);
   ctx.beginPath(); ctx.moveTo(xP(0),yP(provAbs[0]));
   provAbs.forEach((_,i)=>ctx.lineTo(xP(i),yP(provAbs[i])));
   ctx.strokeStyle='#5a5f6e66'; ctx.lineWidth=1.5; ctx.stroke(); ctx.setLineDash([]);
 
+  // Charges area — solid up to last real year, dashed for estimates
+  const lastRealIdx=dataReal.findLastIndex(d=>!d.est);
+  // Solid area up to last real
   ctx.beginPath(); ctx.moveTo(xP(0),yP(charges[0]));
-  charges.forEach((_,i)=>ctx.lineTo(xP(i),yP(charges[i])));
-  ctx.lineTo(xP(years.length-1),H-pad.bottom); ctx.lineTo(xP(0),H-pad.bottom); ctx.closePath();
+  for(let i=0;i<=lastRealIdx;i++) ctx.lineTo(xP(i),yP(charges[i]));
+  ctx.lineTo(xP(lastRealIdx),H-pad.bottom); ctx.lineTo(xP(0),H-pad.bottom); ctx.closePath();
   const gr=ctx.createLinearGradient(0,pad.top,0,H-pad.bottom);
   gr.addColorStop(0,'rgba(201,168,76,.12)'); gr.addColorStop(1,'rgba(201,168,76,0)');
   ctx.fillStyle=gr; ctx.fill();
   ctx.beginPath(); ctx.moveTo(xP(0),yP(charges[0]));
-  charges.forEach((_,i)=>ctx.lineTo(xP(i),yP(charges[i])));
+  for(let i=0;i<=lastRealIdx;i++) ctx.lineTo(xP(i),yP(charges[i]));
   ctx.strokeStyle='#c9a84c'; ctx.lineWidth=1.5; ctx.stroke();
+
+  // Dashed extension for estimates
+  if(lastRealIdx < charges.length-1){
+    ctx.setLineDash([5,3]);
+    ctx.beginPath(); ctx.moveTo(xP(lastRealIdx),yP(charges[lastRealIdx]));
+    for(let i=lastRealIdx+1;i<charges.length;i++) ctx.lineTo(xP(i),yP(charges[i]));
+    ctx.strokeStyle='#c9a84c88'; ctx.lineWidth=1.5; ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
   charges.forEach((v,i)=>{
-    ctx.beginPath(); ctx.arc(xP(i),yP(v),4,0,Math.PI*2); ctx.fillStyle='#c9a84c'; ctx.fill();
-    ctx.fillStyle='#ecedf0'; ctx.font='10px Jost'; ctx.textAlign='center'; ctx.fillText(fmt0(v),xP(i),yP(v)-12);
+    ctx.beginPath(); ctx.arc(xP(i),yP(v),4,0,Math.PI*2);
+    ctx.fillStyle=dataReal[i].est?'#c9a84c66':'#c9a84c'; ctx.fill();
+    ctx.fillStyle='#ecedf0'; ctx.font='10px Jost'; ctx.textAlign='center';
+    ctx.fillText(fmt0(v),xP(i),yP(v)-12);
   });
   soldes.forEach((v,i)=>{
     const col=v>=0?'#bf8a7c':'#9bbfa0'; const sign=v>=0?'+':'';
-    ctx.fillStyle=col; ctx.font='bold 10px Jost'; ctx.textAlign='center';
+    ctx.fillStyle=dataReal[i].est?col+'88':col;
+    ctx.font=dataReal[i].est?'italic 10px Jost':'bold 10px Jost';
+    ctx.textAlign='center';
     ctx.fillText(sign+fmt0(v),xP(i),H-pad.bottom+(v>=0?-4:12));
   });
-  ctx.fillStyle='#c9a84c'; ctx.fillRect(pad.left,H-8,16,2);
+
+  // Legend
+  ctx.setLineDash([]); ctx.fillStyle='#c9a84c'; ctx.fillRect(pad.left,H-8,16,2);
   ctx.fillStyle='#5a5f6e'; ctx.font='10px Jost'; ctx.textAlign='left'; ctx.fillText('Charges réelles',pad.left+20,H-4);
   ctx.setLineDash([4,4]); ctx.beginPath(); ctx.moveTo(pad.left+155,H-7); ctx.lineTo(pad.left+171,H-7);
   ctx.strokeStyle='#5a5f6e66'; ctx.lineWidth=1.5; ctx.stroke(); ctx.setLineDash([]);
   ctx.fillStyle='#5a5f6e'; ctx.fillText('Provisions',pad.left+175,H-4);
+  ctx.fillStyle='#c9a84c88'; ctx.font='italic 10px Jost'; ctx.fillText('* Estimé',pad.left+260,H-4);
 
   const tb=document.getElementById('tbody-soldes'); tb.innerHTML='';
   SOLDES.forEach(d=>{
+    if(d.na){
+      tb.innerHTML+=`<tr><td>${d.year}</td><td colspan="2" style="color:var(--muted);font-style:italic">Annexe non disponible</td><td style="color:var(--muted)">—</td><td style="font-size:.7rem;color:var(--muted)">${d.src}</td></tr>`;
+      return;
+    }
     const sc=d.solde>=0?'up':'dn'; const sg=d.solde>=0?'+':'';
-    tb.innerHTML+=`<tr><td>${d.year}</td><td>${fmt(d.charges)}</td><td style="color:var(--muted)">${fmt(Math.abs(d.prov))}</td><td><span class="${sc}">${sg}${fmt(d.solde)}</span></td><td style="font-size:.7rem;color:var(--muted)">${d.src}</td></tr>`;
+    const estStyle=d.est?'font-style:italic;opacity:.7':'';
+    tb.innerHTML+=`<tr style="${estStyle}"><td>${d.year}${d.est?' *':''}</td><td>${fmt(d.charges)}</td><td style="color:var(--muted)">${fmt(Math.abs(d.prov))}</td><td><span class="${sc}">${sg}${fmt(d.solde)}</span></td><td style="font-size:.7rem;color:var(--muted)">${d.src}</td></tr>`;
   });
-  const tot=SOLDES.reduce((s,d)=>s+d.solde,0);
-  tb.innerHTML+=`<tr class="subtotal"><td colspan="3">Solde cumulé 2020→2024</td><td><span class="${tot>=0?'up':'dn'}">${tot>=0?'+':''}${fmt(tot)}</span></td><td></td></tr>`;
+  const tot=SOLDES.filter(d=>!d.na).reduce((s,d)=>s+d.solde,0);
+  tb.innerHTML+=`<tr class="subtotal"><td colspan="3">Solde cumulé 2020→2025 (est.)</td><td><span class="${tot>=0?'up':'dn'}">${tot>=0?'+':''}${fmt(tot)}</span></td><td></td></tr>`;
 }
 
 // ── POSTES ────────────────────────────────────────
